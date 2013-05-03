@@ -8,9 +8,10 @@
   (:require [clojure.test :refer :all]
             [lancet.core :as lancet]
             [lein-junit.core :refer :all]
+            [lein-junit.plugin :refer [middleware]]
             [leiningen.core.project :refer [read]]))
 
-(def project (read "sample/project.clj"))
+(def project (middleware (read "sample/project.clj")))
 (def fileset-spec ["classes" :includes "**/*Test.class"])
 
 (deftest test-configure-batch-test

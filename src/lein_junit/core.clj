@@ -27,14 +27,18 @@
 (defn selector-pattern [selector]
   (re-pattern (str (replace selector "." File/separator) ".*")))
 
+(defn relativize [root path]
+  (.getPath (.relativize (.toURI (file root)) (.toURI (file path)))))
+
 (defn find-testcases
   "Returns the class filesnames of the project's Junit test cases."
   [project]
   (for [path (:junit project)
-        file (file-seq (file (:root project) path))
+        file (file-seq (file path))
         :when (and (not (.isDirectory file))
                    (re-matches #".*Test\.java" (str file)))]
-    (-> (replace (str file) (re-pattern (str ".*" File/separator path File/separator)) "")
+    (-> (relativize path file)
+        (replace (re-pattern (str ".*" File/separator path File/separator)) "")
         (replace #"\.java" ".class"))))
 
 (defn select-testcases
